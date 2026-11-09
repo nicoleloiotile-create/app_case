@@ -2,7 +2,6 @@ const T = "case_annunci";
 
 const STATI=["Nuove","Interessanti","Contattate","Visita fissata","Viste","Scartate"];
 const CRIT=[["sud","Esposizione a sud"],["classe","Classe energetica A–C"],["balcone","Balcone"],["noCond","Senza condominio"],["bagni2","Secondo bagno"],["infissi","Infissi/impianti recenti"],["sotto140","Prezzo sotto 140.000 €"],["mq80","Almeno 80 m²"]];
-const FILTRI={k:["Max 160.000 €","Trilocale+","Box auto","Ottimo stato","No aste"],z:["Treviso Nord","Spresiano","Carità","Villorba","Monigo","Maserada","Ponzano","Povegliano","Susegana","Conegliano","San Vendemiano","Montebelluna","Giavera"]};
 const PRO=["Ottima esposizione","Molto luminosa","Pronta da abitare","Box comodo","Bel balcone/terrazzo","Giardino","Zona tranquilla","Vicina ai servizi","Ottimo prezzo","Poche spese","Classe energetica buona","Spazi ben distribuiti","Studio perfetto"];
 const CONTRO=["Da sistemare","Infissi vecchi","Arredamento vecchio","Poco sole","Spese alte","Piano alto senza ascensore","Zona trafficata","Prezzo alto","Stanze piccole"];
 
@@ -49,7 +48,6 @@ async function save(id,patch){
 }
 
 /* ---------- Interfaccia ---------- */
-$("#filters").innerHTML=FILTRI.k.map(f=>`<span class="chip k">${f}</span>`).join("")+FILTRI.z.map(f=>`<span class="chip">${f}</span>`).join("");
 
 function tagsHtml(h){const p=h.pro||[],c=h.contro||[];if(!p.length&&!c.length)return"";return `<div>${p.map(t=>`<span class="tg">+ ${esc(t)}</span>`).join("")}${c.map(t=>`<span class="tg c">− ${esc(t)}</span>`).join("")}</div>`}
 function card(h){
