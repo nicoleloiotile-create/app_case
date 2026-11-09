@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Case">
+<meta name="theme-color" content="#ffffff">
+<title>Ricerca casa</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.svg">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<div id="login" class="login" hidden>
+  <h1>Ricerca casa</h1>
+  <p class="muted">Inserisci il PIN per entrare.</p>
+  <input id="em" type="password" inputmode="numeric" placeholder="PIN" onkeydown="if(event.key=='Enter')tryPin()">
+  <button class="btn" onclick="tryPin()">Entra</button>
+  <p class="muted" id="lmsg"></p>
+</div>
+<div class="app" id="app" hidden>
+  <header>
+    <div><h1 id="title">Case</h1><div class="sub" id="subtitle">Caricamento…</div></div>
+    <button class="me" id="me" onclick="switchMe()"></button>
+  </header>
+  <div class="filters" id="filters"></div>
+  <div class="tabs" id="tabs"></div>
+  <main id="main"></main>
+  <button class="fab" onclick="openAdd()" title="Aggiungi casa">+</button>
+  <nav>
+    <button data-v="home" class="on"><b>⌂</b>Case</button>
+    <button data-v="fav"><b>☆</b>Preferite</button>
+    <button data-v="cal"><b>▦</b>Visite</button>
+  </nav>
+</div>
+<div class="sheet" id="sheet"><div class="in" id="detail"></div></div>
+<div class="toast" id="toast"></div>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
