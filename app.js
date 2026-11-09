@@ -5,7 +5,7 @@ const CRIT=[["sud","Esposizione a sud"],["classe","Classe energetica A–C"],["b
 const PRO=["Ottima esposizione","Molto luminosa","Pronta da abitare","Box comodo","Bel balcone/terrazzo","Giardino","Zona tranquilla","Vicina ai servizi","Ottimo prezzo","Poche spese","Classe energetica buona","Spazi ben distribuiti","Studio perfetto"];
 const CONTRO=["Da sistemare","Infissi vecchi","Arredamento vecchio","Poco sole","Spese alte","Piano alto senza ascensore","Zona trafficata","Prezzo alto","Stanze piccole"];
 
-let houses=[],view="home",tab="Nuove",openId=null,favMode="lista",me="";
+let houses=[],view="home",tab="Nuove",openId=null,favMode="schede",me="";
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const eur=n=>n?Number(n).toLocaleString("it-IT")+" €":"—";
@@ -86,7 +86,7 @@ function render(){
   }else if(view=="fav"){
     $("#title").textContent="Preferite";$("#subtitle").textContent="Le case con la stella";t.style.display="none";
     const l=houses.filter(h=>(h.fav||h.preferitoSimone)&&h.stato!="Scartate");
-    const seg=`<div class="seg">${["lista","schede"].map(x=>`<button class="tab ${favMode==x?"on":""}" onclick="favMode='${x}';render()">${x=="lista"?"Riepilogo":"Schede"}</button>`).join("")}</div>`;
+    const seg=`<div class="seg">${["schede","lista"].map(x=>`<button class="tab ${favMode==x?"on":""}" onclick="favMode='${x}';render()">${x=="lista"?"Riepilogo":"Schede"}</button>`).join("")}</div>`;
     if(!l.length)m.innerHTML=`<div class="empty">Nessuna preferita. Tocca ☆ su una casa.</div>`;
     else if(favMode=="schede")m.innerHTML=seg+`<div class="list">${l.map(card).join("")}</div>`;
     else m.innerHTML=seg+`<div style="padding:4px 20px">${l.map(h=>{const v=h.voti||{};return `<div class="frow" onclick="openH('${h.id}')"><div class="l"><b>${esc(h.comune)}</b> <span class="muted">· ${esc(h.stato)}</span><div class="muted" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(h.titolo)}</div>${tagsHtml(h)||`<div class="muted" style="margin-top:6px;font-size:12px">Nessuna etichetta: apri e aggiungi il perché</div>`}</div><div class="r"><div class="price" style="font-size:15px">${eur(h.prezzo)}</div><div class="muted">${score(h)}</div><div class="muted">N ${v.Nicole||"–"} · S ${v.Simone||"–"}</div></div></div>`}).join("")}</div>`;
