@@ -87,3 +87,9 @@ textarea{resize:vertical;min-height:64px}
 .seg{display:flex;gap:4px;padding:10px 20px 0}
 .fab{position:fixed;bottom:84px;right:calc(50% - 250px);width:52px;height:52px;border-radius:50%;background:#111;color:#fff;border:none;font-size:26px;cursor:pointer;z-index:9}
 @media(max-width:520px){.fab{right:16px}}
+
+.key{display:flex;gap:8px;margin-top:8px}
+.key span{flex:1;border:1px solid #111;border-radius:10px;padding:7px 10px;font-size:14px;font-weight:600;line-height:1.25}
+.key span small{display:block;font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:#777}
+.key span.sud{background:#111;color:#fff}.key span.sud small{color:#bbb}
+.key span.nd{border:1px dashed #bbb;color:#999;font-weight:500}

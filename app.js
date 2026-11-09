@@ -63,8 +63,13 @@ function card(h){
   <button class="fav" onclick="event.stopPropagation();save('${h.id}',{fav:${!h.fav}})">${h.fav?"★":"☆"}</button>
   <div class="big">${esc(h.comune||"")}</div><div class="typ">${esc(h.tipo||"")} · ${h.locali||"?"} locali · ${h.mq||"?"} m²</div></div>
   <div class="row"><span class="price">${eur(h.prezzo)}</span><span class="muted">${h.prezzo&&h.mq?eur(Math.round(h.prezzo/h.mq))+"/m²":""}</span></div>
-  <div class="specs">${esc(h.titolo||"")}</div><div class="muted">${esc(h.indirizzo||"")}</div>
+  ${keyInfo(h)}<div class="specs">${esc(h.titolo||"")}</div><div class="muted">${esc(h.indirizzo||"")}</div>
   <div>${simo}${contatto}${nrisp}${vis}${h.box?"":`<span class="flag">Box da verificare</span>`}</div>${tagsHtml(h)}</div>`}
+function keyInfo(h){
+  const sud=/sud/i.test(h.esposizione||"");
+  const c=h.classe&&h.classe!="Non indicata"?h.classe:null;
+  return `<div class="key"><span class="${c?"on":"nd"}"><small>Classe energetica</small>${esc(c||"Da verificare")}</span><span class="${h.esposizione?(sud?"on sud":"on"):"nd"}"><small>Esposizione</small>${esc(h.esposizione||"Da verificare")}${sud?" ☀":""}</span></div>`;
+}
 function toggleTag(id,kind,t){const h=houses.find(x=>x.id==id);const a=[...(h[kind]||[])];const i=a.indexOf(t);i>=0?a.splice(i,1):a.push(t);save(id,{[kind]:a})}
 function addTag(id,kind){const t=$("#t_"+kind).value.trim();if(!t)return;const h=houses.find(x=>x.id==id);if(!(h[kind]||[]).includes(t))save(id,{[kind]:[...(h[kind]||[]),t]})}
 function picker(h,kind,list){const cur=h[kind]||[];const all=[...new Set([...list,...cur])];return `<div class="tagpick">${all.map(t=>`<button class="${kind=="contro"?"c ":""}${cur.includes(t)?"on":""}" onclick="toggleTag('${h.id}','${kind}',${esc(JSON.stringify(t))})">${esc(t)}</button>`).join("")}</div>
@@ -112,7 +117,7 @@ function openH(id){
    <button class="icon" onclick="save('${h.id}',{fav:${!h.fav}})">${h.fav?"★":"☆"}</button></div>
   ${h.foto&&h.foto.length?`<div class="gal">${h.foto.map(u=>`<img src="${esc(u)}" loading="lazy" referrerpolicy="no-referrer" alt="">`).join("")}</div>`:""}
   <div class="pad"><div class="muted">${esc(h.fonte)} · ${esc(h.comune)}</div>
-   <div class="price" style="font-size:28px;margin-top:4px">${eur(h.prezzo)}</div>
+   <div class="price" style="font-size:28px;margin-top:4px">${eur(h.prezzo)}</div>${keyInfo(h)}
    ${h.prezzoPrima?`<div class="muted">Prima ${eur(h.prezzoPrima)}</div>`:""}
    <div style="font-weight:600;margin-top:6px">${esc(h.titolo)}</div><div class="muted">${esc(h.indirizzo)}</div>
    ${h.descr?`<p style="font-size:14px;color:#444;margin-top:10px;line-height:1.45">${esc(h.descr)}</p>`:""}</div>
@@ -123,7 +128,7 @@ function openH(id){
   <div class="sec"><h3>Caratteristiche</h3><div class="grid">
    <div><span>Tipologia</span>${esc(h.tipo||"—")}</div><div><span>Superficie</span>${h.mq||"—"} m²</div>
    <div><span>Locali</span>${h.locali||"—"}</div><div><span>Bagni</span>${h.bagni||"—"}</div>
-   <div><span>Piano</span>${esc(h.piano||"—")}</div><div><span>Box</span>${h.box?"Sì":"Da verificare"}</div>
+   <div><span>Esposizione</span>${esc(h.esposizione||"—")}</div><div><span>Piano</span>${esc(h.piano||"—")}</div><div><span>Box</span>${h.box?"Sì":"Da verificare"}</div>
    <div><span>Classe energetica</span>${esc(h.classe||"—")}</div><div><span>Inserzionista</span>${esc(h.inserzionista||"—")}</div></div>
    ${h.dettagli?`<p style="font-size:13px;color:#444;margin-top:12px;line-height:1.5">${esc(h.dettagli)}</p>`:""}</div>
   <div class="sec"><h3>Perché ci piace</h3>${picker(h,"pro",PRO)}</div>
