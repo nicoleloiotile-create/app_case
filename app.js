@@ -124,7 +124,8 @@ function openH(id){
    <div><span>Tipologia</span>${esc(h.tipo||"—")}</div><div><span>Superficie</span>${h.mq||"—"} m²</div>
    <div><span>Locali</span>${h.locali||"—"}</div><div><span>Bagni</span>${h.bagni||"—"}</div>
    <div><span>Piano</span>${esc(h.piano||"—")}</div><div><span>Box</span>${h.box?"Sì":"Da verificare"}</div>
-   <div><span>Classe energetica</span>${esc(h.classe||"—")}</div><div><span>Inserzionista</span>${esc(h.inserzionista||"—")}</div></div></div>
+   <div><span>Classe energetica</span>${esc(h.classe||"—")}</div><div><span>Inserzionista</span>${esc(h.inserzionista||"—")}</div></div>
+   ${h.dettagli?`<p style="font-size:13px;color:#444;margin-top:12px;line-height:1.5">${esc(h.dettagli)}</p>`:""}</div>
   <div class="sec"><h3>Perché ci piace</h3>${picker(h,"pro",PRO)}</div>
   <div class="sec"><h3>Cosa non ci convince</h3>${picker(h,"contro",CONTRO)}</div>
   <div class="sec"><h3>Compatibilità · ${score(h)}</h3><ul class="match">${CRIT.map(c=>`<li><span>${m[c[0]]===true?"●":m[c[0]]===false?"○":"?"}</span>${c[1]}${m[c[0]]==null?' <span class="muted">da verificare</span>':""}</li>`).join("")}</ul></div>
