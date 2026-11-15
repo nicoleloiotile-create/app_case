@@ -35,7 +35,7 @@ function tryPin(){const p=$("#pin").value.trim();if(p)enter(p)}
 async function load(){
   const {data,error}=await sb.from(T).select("id,data");
   if(error){$("#sub").textContent="Errore nel caricamento dei dati";return}
-  houses=data.filter(r=>!r.id.startsWith("_")).map(r=>({id:r.id,...r.data}));
+  houses=data.filter(r=>!r.id.startsWith("_")&&!(r.data||{}).archiviata).map(r=>({id:r.id,...r.data}));
   pesi=(data.find(r=>r.id=="_pesi")||{}).data||{};
   const typing=document.activeElement&&document.activeElement.matches("input,textarea,select");
   if(typing)return;
