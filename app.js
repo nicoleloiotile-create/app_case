@@ -88,7 +88,7 @@ function render(){
   document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.v==view));
   const t=$("#tabs"),m=$("#main");$("#fab").hidden=view!="case";
   if(view=="case"){
-    t.hidden=false;$("#ttl").textContent="Le nostre case";
+    t.hidden=false;$("#ttl").textContent="Ricerca case";
     $("#sub").textContent=houses.length?`${houses.filter(h=>h.stato!="Scartata").length} case in lista`:"Segnate qui le case che vi interessano";
     t.innerHTML=TABS.map(s=>{const n=s=="Tutte"?houses.filter(h=>h.stato!="Scartata").length:houses.filter(h=>h.stato==s).length;return `<button type="button" class="tab ${s==tab?"on":""}" onclick="tab='${s}';render()">${s}${n?`<i>${n}</i>`:""}</button>`}).join("");
     const l=houses.filter(h=>tab=="Tutte"?h.stato!="Scartata":h.stato==tab).sort((a,b)=>(media(b)??-1)-(media(a)??-1)||String(b.aggiunta||"").localeCompare(String(a.aggiunta||"")));
