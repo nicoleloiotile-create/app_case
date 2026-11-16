@@ -88,3 +88,10 @@ tr.top td{font-weight:700}.tw{overflow-x:auto}
 .cap{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--mut);font-weight:600;margin:22px 0 4px}
 .toast{position:fixed;left:50%;bottom:calc(140px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--inv);padding:9px 16px;border-radius:99px;font-size:13px;z-index:40;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90vw;text-align:center}
 .toast.on{opacity:1}
+
+html,body{overflow-x:hidden;max-width:100%}
+.sheet{overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.sin{width:100%;max-width:560px;overflow-x:hidden}
+.gal{overscroll-behavior-x:contain;touch-action:pan-x pan-y;scrollbar-width:none}
+.keys b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+img{height:auto}

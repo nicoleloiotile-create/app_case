@@ -5,7 +5,7 @@ const TABS=["Tutte",...STATI];
 const EVID=[["box","Box auto"],["balcone","Balcone"],["giardino","Giardino"],["sud","Esposizione sud"],["bagni2","2 bagni"],["noCond","Senza condominio"],["classe","Classe A–C"],["pronta","Pronta da abitare"],["cantina","Cantina"],["arredata","Arredata"]];
 const CRIT=[["prezzo","Prezzo"],["zona","Zona e servizi"],["luce","Luce ed esposizione"],["stato","Stato e finiture"],["spazi","Spazi interni"],["esterni","Box ed esterni"],["consumi","Consumi e spese"],["quiete","Tranquillità"]];
 const PERS=["Nicole","Simone"];
-let sb=null,houses=[],pesi={};
+let sb=null,houses=[],pesi={},lastSig="";
 let view="case",tab="Tutte",openId=null,editMode=false,calM=null,calSel=null;
 let me="Nicole";try{me=localStorage.getItem("chi")||"Nicole"}catch(e){}
 const $=s=>document.querySelector(s);
@@ -35,6 +35,7 @@ function tryPin(){const p=$("#pin").value.trim();if(p)enter(p)}
 async function load(){
   const {data,error}=await sb.from(T).select("id,data");
   if(error){$("#sub").textContent="Errore nel caricamento dei dati";return}
+  const sig=JSON.stringify(data);if(sig===lastSig)return;lastSig=sig;
   houses=data.filter(r=>!r.id.startsWith("_")&&!(r.data||{}).archiviata).map(r=>({id:r.id,...r.data}));
   pesi=(data.find(r=>r.id=="_pesi")||{}).data||{};
   const typing=document.activeElement&&document.activeElement.matches("input,textarea,select");
