@@ -61,7 +61,13 @@ document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{view=b.dataset
 
 /* ---------- Lista case ---------- */
 const isSud=h=>/sud/i.test(h.esposizione||"")||(h.evid||{}).sud;
-const classeL=h=>{const m=String(h.classe||"").match(/^\s*([A-G]\d?)\b/);return m?m[1]:(h.classe?"?":"–")};
+/* classe energetica: la lettera dell'annuncio se c'è, altrimenti stimata dal consumo */
+const GAS_EUR_SMC=1.77, KWH_SMC=10.7; /* prezzo ARERA ottobre 2026 tutto compreso, cliente tipo */
+const kwhM2=h=>{const m=String(h.classe||"").match(/([\d.]+(?:,\d+)?)\s*kWh/i);return m?parseFloat(m[1].replace(/\./g,"").replace(",",".")):null};
+const stimaL=k=>k<50?"A":k<70?"B":k<90?"C":k<130?"D":k<170?"E":k<230?"F":"G";
+const classeL=h=>{const m=String(h.classe||"").match(/^\s*([A-G]\d?)\b/);if(m)return m[1];const k=kwhM2(h);return k?"~"+stimaL(k):"–"};
+const costoAnno=h=>{const k=kwhM2(h);return k&&h.mq?Math.round(k*h.mq/KWH_SMC*GAS_EUR_SMC/10)*10:null};
+const costoS=h=>{const c=costoAnno(h);return c?"≈ "+c.toLocaleString("it-IT")+" €":"–"};
 function evidChips(h){const e=h.evid||{};return EVID.filter(([k])=>e[k]).map(([,l])=>`<span class="chip">${l}</span>`).join("")}
 function card(h){
   const m=media(h),v=h.visita;
@@ -73,7 +79,7 @@ function card(h){
    ${f?`<img class="cimg" src="${esc(f.url)}" alt="" loading="lazy" referrerpolicy="no-referrer">`:`<div class="cph">Nessuna foto</div>`}
    <div class="cbody"><div class="ctop"><div><div class="com">${esc(h.comune||"Senza comune")}</div><div class="mut">${esc(h.titolo||"")}</div></div>
    <div style="text-align:right"><div class="price">${eur(h.prezzo)}</div>${m!=null?`<span class="score" title="Punteggio medio">${m}</span>`:""}</div></div>
-   <div class="keys"><div class="${isSud(h)?"hl":""}"><b>${esc(h.esposizione||"–")}</b><span>esposizione</span></div><div><b>${esc(classeL(h))}</b><span>classe</span></div><div><b>${h.mq||"–"}</b><span>m²</span></div><div><b>${(h.evid||{}).box?"Sì":"–"}</b><span>box</span></div></div>
+   <div class="keys"><div class="${isSud(h)?"hl":""}"><b>${esc(h.esposizione||"–")}</b><span>esposizione</span></div><div><b>${esc(classeL(h))}</b><span>classe</span></div><div><b>${costoS(h)}</b><span>gas / anno</span></div><div><b>${h.mq||"–"}</b><span>m²</span></div></div>
    <div class="mut">${esc(h.stato)}${h.locali?" · "+h.locali+" locali":""}${h.bagni?" · "+h.bagni+" bagni":""}${h.piano?" · piano "+esc(h.piano):""}</div>
    <div class="chips">${evidChips(h)}${vis}${con}${pc}</div></div></button>`}
 
@@ -120,7 +126,7 @@ function renderConf(m){
   const rated=l.filter(x=>x.m!=null);
   $("#sub").textContent=rated.length?`${rated.length} case valutate su ${l.length}`:"Valutate le case per vedere la classifica";
   const best=rated[0];
-  const side=`<div class="tw"><table><thead><tr><th>Casa</th><th>Prezzo</th><th>Esp.</th><th>Classe</th><th>m²</th></tr></thead><tbody>${l.map(({h})=>`<tr style="cursor:pointer" onclick="openH('${h.id}')"><td>${esc(h.comune)}</td><td>${eur(h.prezzo)}</td><td>${esc(h.esposizione||"–")}</td><td>${esc(classeL(h))}</td><td>${h.mq||"–"}</td></tr>`).join("")}</tbody></table></div>`;
+  const side=`<div class="tw"><table><thead><tr><th>Casa</th><th>Prezzo</th><th>Esp.</th><th>Classe</th><th>Gas/anno</th><th>m²</th></tr></thead><tbody>${l.map(({h})=>`<tr style="cursor:pointer" onclick="openH('${h.id}')"><td>${esc(h.comune)}</td><td>${eur(h.prezzo)}</td><td>${esc(h.esposizione||"–")}</td><td>${esc(classeL(h))}</td><td>${costoS(h)}</td><td>${h.mq||"–"}</td></tr>`).join("")}</tbody></table></div>`;
   const w=PERS.map(p=>`<div class="par"><b>Quanto conta per ${p}</b><div class="mut">0 = non importa · 3 = fondamentale</div>${CRIT.map(([k,lab])=>`<div class="wrow"><span>${lab}</span><div class="dots">${[0,1,2,3].map(i=>`<button type="button" class="${peso(p,k)==i?"on":""}" ${p==me?`onclick="setPeso('${p}','${k}',${i})"`:"disabled"} aria-label="${lab} peso ${i}">${i}</button>`).join("")}</div></div>`).join("")}${p!=me?`<div class="mut">Per modificare passa a “Sono ${p}” in alto.</div>`:""}</div>`).join("");
   m.innerHTML=`${best?`<div class="sec" style="border-top:0"><h3>In testa</h3><div class="row" style="justify-content:space-between;cursor:pointer" onclick="openH('${best.h.id}')"><div><div class="com">${esc(best.h.comune)}</div><div class="mut">${esc(best.h.titolo||"")} · ${eur(best.h.prezzo)}</div></div><div class="big">${best.m}</div></div></div>`:""}
   <div class="sec" ${best?"":`style="border-top:0"`}><h3>Classifica <span>su 100</span></h3>
@@ -157,7 +163,8 @@ function openH(id,keep){
    <div class="mut">${esc(h.fonte||"")}${h.agenzia?" · "+esc(h.agenzia):""}</div>
    <h2>${esc(h.comune||"")}</h2><div class="mut">${esc(h.indirizzo||"")}</div>
    <div class="row" style="justify-content:space-between;margin-top:6px"><div class="big">${eur(h.prezzo)}</div>${mm!=null?`<span class="score">${mm}/100</span>`:""}</div>
-   <div class="keys" style="margin-top:6px"><div class="${isSud(h)?"hl":""}"><b>${esc(h.esposizione||"–")}</b><span>esposizione</span></div><div><b>${esc(classeL(h))}</b><span>classe</span></div><div><b>${h.mq||"–"}</b><span>m²</span></div><div><b>${h.prezzo&&h.mq?Math.round(h.prezzo/h.mq).toLocaleString("it-IT"):"–"}</b><span>€/m²</span></div></div>
+   <div class="keys" style="margin-top:6px"><div class="${isSud(h)?"hl":""}"><b>${esc(h.esposizione||"–")}</b><span>esposizione</span></div><div><b>${esc(classeL(h))}</b><span>classe</span></div><div><b>${costoS(h)}</b><span>gas / anno</span></div><div><b>${h.mq||"–"}</b><span>m²</span></div></div>
+   ${costoAnno(h)?`<div class="mut" style="font-size:12px">${String(classeL(h)).startsWith("~")?"Classe stimata dal consumo (la lettera vera è sull'APE). ":""}Spesa di gas stimata per riscaldamento e acqua calda, ai prezzi di ottobre 2026: indicativa, dipende da come usate la casa.</div>`:""}
    ${h.titolo?`<div style="font-weight:600;margin-top:6px">${esc(h.titolo)}</div>`:""}
    ${h.descr?`<p style="margin:6px 0 0;color:var(--mut);font-size:14px">${esc(h.descr)}</p>`:""}
    ${h.link?`<a class="btn" style="margin-top:10px" href="${esc(h.link)}" target="_blank" rel="noopener">Apri l'annuncio ↗</a>`:""}
@@ -167,7 +174,7 @@ function openH(id,keep){
    <div><span>Tipologia</span>${esc(h.tipo||"—")}</div><div><span>Superficie</span>${h.mq?h.mq+" m²":"—"}</div>
    <div><span>Locali · camere</span>${h.locali||"—"} · ${h.camere||"—"}</div><div><span>Bagni</span>${h.bagni||"—"}</div>
    <div><span>Piano</span>${esc(h.piano||"—")}</div><div><span>Esposizione</span>${esc(h.esposizione||"—")}</div>
-   <div><span>Box / garage</span>${(h.evid||{}).box?"Sì":"—"}</div><div><span>Classe energetica</span>${esc(h.classe||"—")}</div>
+   <div><span>Box / garage</span>${(h.evid||{}).box?"Sì":"—"}</div><div><span>Classe energetica</span>${esc(classeL(h))}${kwhM2(h)?` <span style="display:inline">· consumo ${kwhM2(h)}</span>`:""}</div>
    <div><span>Spese condominiali</span>${esc(h.spese||"—")}</div><div><span>Anno</span>${esc(h.anno||"—")}</div></div></div>
   <div class="sec"><h3>In evidenza</h3><div class="pills">${EVID.map(([k,l])=>`<button type="button" class="pill ${(h.evid||{})[k]?"on":""}" onclick="setEvid('${h.id}','${k}')">${l}</button>`).join("")}</div></div>
   <div class="sec"><h3>Stato</h3><div class="pills">${STATI.map(s=>`<button type="button" class="pill ${s==h.stato?"on":""}" onclick="setStato('${h.id}','${s}')">${s}</button>`).join("")}</div>
